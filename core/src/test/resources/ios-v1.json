@@ -1,0 +1,34 @@
+{
+  "createdAt" : 1788868800000,
+  "format" : "com.pierreteodoresco.taskomatic.backup",
+  "items" : [
+    {
+      "createdAt" : 1704067200000,
+      "cycleID" : "20000000-0000-0000-0000-000000000001",
+      "id" : "10000000-0000-0000-0000-000000000001",
+      "note" : "日本語 aussi",
+      "title" : "Café ☕"
+    },
+    {
+      "completedAt" : 1706718600000,
+      "createdAt" : 1704067200000,
+      "cycleID" : "20000000-0000-0000-0000-000000000002",
+      "id" : "10000000-0000-0000-0000-000000000002",
+      "note" : "",
+      "recurrence" : {
+        "interval" : 1,
+        "unit" : "month"
+      },
+      "title" : "Chaque mois"
+    },
+    {
+      "completedAt" : 1706778900000,
+      "createdAt" : 1704067200000,
+      "cycleID" : "20000000-0000-0000-0000-000000000003",
+      "id" : "10000000-0000-0000-0000-000000000003",
+      "note" : "",
+      "title" : "Archived"
+    }
+  ],
+  "version" : 1
+}

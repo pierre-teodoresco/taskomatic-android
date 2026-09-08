@@ -1,9 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Taskomatic</string>
     <string name="notification_channel">Task reminders</string>
     <string name="notification_title">A task is waiting for you</string>
     <string name="notification_complete">Complete</string>
-    <string name="notification_summary">%1$d tasks are waiting for you</string>
+    <!-- Only used for three or more tasks; one and two tasks show their titles. -->
+    <string name="notification_summary" tools:ignore="PluralsCandidate">%1$d tasks are waiting for you</string>
     <string name="notification_failure">Unable to complete task</string>
     <string name="notification_failure_body">The task is unchanged. Open Taskomatic to try again.</string>
     <string name="reminders">Reminders</string>
@@ -24,6 +25,8 @@
     <string name="empty_active">A little breathing room.</string>
     <string name="empty_active_hint">Add a task whenever you need to.</string>
     <string name="storage_error_title">Unable to save or load</string>
+    <string name="draft_state_failed">Check your draft</string>
+    <string name="draft_state_failed_body">Part of the draft could not be saved for recovery or restored. The saved task is unchanged. Check the fields before saving and the available device storage.</string>
     <string name="storage_error_body">Your draft is kept. Check the available storage and try again.</string>
     <string name="ok">OK</string>
     <string name="active">To do</string>
@@ -53,6 +56,17 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="local_only">Only on this device</string>
+    <string name="manual_backup">Manual backup</string>
+    <string name="export_backup">Export all tasks</string>
+    <string name="export_result">All task states were written to the chosen document. Keep your backup in a safe place; it contains your titles and notes.</string>
+    <string name="manual_backup_hint">Taskomatic JSON files are compatible with iOS. You choose each file and location; a document provider may offer remote storage. Taskomatic does not synchronize or back up automatically.</string>
+    <string name="import_backup">Import a backup</string>
+    <string name="import_preview">Tasks to import: %1$d. Existing tasks: %2$d. Existing tasks stay unchanged. Imported notification actions are reset.</string>
+    <string name="import_confirm">Import</string>
+    <string name="import_result">Imported: %1$d. Existing tasks kept unchanged: %2$d.</string>
+    <string name="backup_done">Backup operation complete</string>
+    <string name="backup_failed">Backup operation failed</string>
+    <string name="backup_failed_body">Unable to read, validate or write the document. Use a Taskomatic version-1 JSON file (up to 10 MiB and 10,000 tasks), and check storage access. No task was changed by the failed operation. A failed export file may be incomplete.</string>
     <string name="local_only_body">No account, no synchronization, no automatic cloud backup. Uninstalling the app deletes its local data.</string>
     <string name="version">Version %1$s</string>
     <string name="language">Language</string>

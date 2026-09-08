@@ -23,14 +23,19 @@ import com.pierreteodoresco.taskomatic.R
 import com.pierreteodoresco.taskomatic.core.TaskItem
 import com.pierreteodoresco.taskomatic.core.Recurrence
 import com.pierreteodoresco.taskomatic.core.RecurrenceUnit
+import com.pierreteodoresco.taskomatic.data.TextStateStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskEditor(item: TaskItem, busy: Boolean, onClose: () -> Unit, onDelete: () -> Unit, onSave: (String, String, Recurrence?) -> Unit) {
-    var title by rememberSaveable(item.id.toString()) { mutableStateOf(item.title) }
-    var note by rememberSaveable(item.id.toString()) { mutableStateOf(item.note) }
+fun TaskEditor(item: TaskItem, busy: Boolean, stateKey: String, storage: TextStateStorage, onDraftFailure: () -> Unit,
+    onClose: () -> Unit, onDelete: () -> Unit, onSave: (String, String, Recurrence?) -> Unit) {
+    val titleSaver = remember(stateKey) { textStateSaver(storage, "$stateKey-draft-title", onDraftFailure) }
+    val noteSaver = remember(stateKey) { textStateSaver(storage, "$stateKey-draft-note", onDraftFailure) }
+    val intervalSaver = remember(stateKey) { textStateSaver(storage, "$stateKey-draft-interval", onDraftFailure) }
+    var title by rememberSaveable(item.id.toString(), stateSaver = titleSaver) { mutableStateOf(item.title) }
+    var note by rememberSaveable(item.id.toString(), stateSaver = noteSaver) { mutableStateOf(item.note) }
     var recurring by rememberSaveable(item.id.toString()) { mutableStateOf(item.recurrence != null) }
-    var interval by rememberSaveable(item.id.toString()) { mutableStateOf((item.recurrence?.interval ?: 1).toString()) }
+    var interval by rememberSaveable(item.id.toString(), stateSaver = intervalSaver) { mutableStateOf((item.recurrence?.interval ?: 1).toString()) }
     var unit by rememberSaveable(item.id.toString()) { mutableStateOf(item.recurrence?.unit ?: RecurrenceUnit.DAY) }
     val validInterval = interval.toIntOrNull()?.takeIf { it in 1..99 }
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
@@ -51,9 +56,9 @@ fun TaskEditor(item: TaskItem, busy: Boolean, onClose: () -> Unit, onDelete: () 
             Column(Modifier.fillMaxSize().padding(padding).imePadding().verticalScroll(rememberScrollState()).padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 OutlinedTextField(title, { title = it }, label = { Text(stringResource(R.string.task_title)) },
-                    enabled = !busy, modifier = Modifier.fillMaxWidth().testTag("edit-title"))
+                    enabled = !busy, maxLines = 4, modifier = Modifier.fillMaxWidth().testTag("edit-title"))
                 OutlinedTextField(note, { note = it }, label = { Text(stringResource(R.string.note)) },
-                    enabled = !busy, minLines = 4, modifier = Modifier.fillMaxWidth().testTag("edit-note"))
+                    enabled = !busy, minLines = 4, maxLines = 8, modifier = Modifier.fillMaxWidth().testTag("edit-note"))
                 HorizontalDivider()
                 Row(Modifier.fillMaxWidth().toggleable(recurring, enabled = !busy, role = Role.Switch,
                     onValueChange = { recurring = it }).testTag("recurrence-enabled"), verticalAlignment = Alignment.CenterVertically) {

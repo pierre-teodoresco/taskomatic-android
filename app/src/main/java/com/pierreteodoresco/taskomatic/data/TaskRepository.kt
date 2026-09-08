@@ -31,9 +31,11 @@ class TaskRepository(
         }
     }
 
-    fun tasks(): List<TaskItem> = helper.readableDatabase.query(
-        "tasks", null, null, null, null, null, "created_at DESC, id ASC"
-    ).use { cursor -> buildList { while (cursor.moveToNext()) add(cursor.task()) } }
+    fun tasks(): List<TaskItem> {
+        val db = helper.readableDatabase
+        return db.query("tasks", taskColumns, null, null, null, null, "created_at DESC, id ASC")
+            .use { cursor -> buildList { while (cursor.moveToNext()) add(cursor.task(db)) } }
+    }
 
     fun add(title: String, note: String = "", recurrence: Recurrence? = null): TaskItem {
         require(title.isNotBlank())
@@ -97,8 +99,8 @@ class TaskRepository(
         helper.writableDatabase.delete("tasks", "id = ?", arrayOf(id.toString())) > 0
 
     private fun find(db: SQLiteDatabase, id: UUID): TaskItem? = db.query(
-        "tasks", null, "id = ?", arrayOf(id.toString()), null, null, null
-    ).use { if (it.moveToFirst()) it.task() else null }
+        "tasks", taskColumns, "id = ?", arrayOf(id.toString()), null, null, null
+    ).use { if (it.moveToFirst()) it.task(db) else null }
 
     private fun <T> transaction(block: (SQLiteDatabase) -> T): T {
         val db = helper.writableDatabase
@@ -122,13 +124,40 @@ private fun TaskItem.values() = ContentValues().apply {
     put("cycle_id", cycleId.toString())
 }
 
-private fun Cursor.task(): TaskItem {
+// Keep every row below the platform CursorWindow limit, including on API 26/27.
+// BLOB fragments preserve embedded NUL and split UTF-8 sequences without truncating text.
+private const val TEXT_CHUNK_BYTES = 128 * 1024
+private val taskColumns = arrayOf("id", "created_at", "completed_at", "recurrence_interval", "recurrence_unit", "cycle_id",
+    "substr(CAST(title AS BLOB), 1, $TEXT_CHUNK_BYTES) AS title_bytes", "length(CAST(title AS BLOB)) AS title_length",
+    "substr(CAST(note AS BLOB), 1, $TEXT_CHUNK_BYTES) AS note_bytes", "length(CAST(note AS BLOB)) AS note_length")
+
+private fun Cursor.task(db: SQLiteDatabase): TaskItem {
     fun string(name: String) = getString(getColumnIndexOrThrow(name))
+    fun text(name: String): String {
+        val size = getInt(getColumnIndexOrThrow("${name}_length"))
+        if (size == 0) return ""
+        val first = checkNotNull(getBlob(getColumnIndexOrThrow("${name}_bytes")))
+        if (size == first.size) return first.decodeToString()
+        val bytes = ByteArray(size)
+        first.copyInto(bytes)
+        var offset = first.size
+        while (offset < size) {
+            val chunk = db.rawQuery("SELECT substr(CAST($name AS BLOB), ?, ?) FROM tasks WHERE id = ?",
+                arrayOf((offset + 1).toString(), TEXT_CHUNK_BYTES.toString(), string("id"))).use {
+                check(it.moveToFirst()) { "Task disappeared while loading text" }
+                it.getBlob(0)
+            }
+            check(chunk.isNotEmpty() && offset + chunk.size <= size) { "Task text changed while loading" }
+            chunk.copyInto(bytes, offset)
+            offset += chunk.size
+        }
+        return bytes.decodeToString()
+    }
     fun instant(name: String): Instant? = getColumnIndexOrThrow(name).let {
         if (isNull(it)) null else Instant.ofEpochMilli(getLong(it))
     }
     val intervalIndex = getColumnIndexOrThrow("recurrence_interval")
-    return TaskItem(UUID.fromString(string("id")), string("title"), string("note"),
+    return TaskItem(UUID.fromString(string("id")), text("title"), text("note"),
         instant("created_at")!!, instant("completed_at"),
         if (isNull(intervalIndex)) null else Recurrence(getInt(intervalIndex), RecurrenceUnit.valueOf(string("recurrence_unit"))),
         UUID.fromString(string("cycle_id")))

@@ -46,6 +46,7 @@ fun TaskomaticApp(model: TaskViewModel) {
     val busy by model.busy.collectAsStateWithLifecycle()
     val error by model.error.collectAsStateWithLifecycle()
     val backgroundFailed by model.backgroundFailed.collectAsStateWithLifecycle()
+    val draftFailed by model.draftFailed.collectAsStateWithLifecycle()
     val refreshFailed by model.refreshFailed.collectAsStateWithLifecycle()
     val editing by model.editing.collectAsStateWithLifecycle()
     val undo by model.undo.collectAsStateWithLifecycle()
@@ -137,7 +138,7 @@ fun TaskomaticApp(model: TaskViewModel) {
                                     tint = MaterialTheme.colorScheme.primary)
                             }
                             Column(Modifier.weight(1f).padding(8.dp)) {
-                                Text(task.title, style = MaterialTheme.typography.bodyLarge)
+                                Text(task.title, maxLines = 3, style = MaterialTheme.typography.bodyLarge)
                                 if (task.note.isNotBlank()) Text(task.note, maxLines = 2,
                                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 task.recurrence?.let { recurrence ->
@@ -157,10 +158,11 @@ fun TaskomaticApp(model: TaskViewModel) {
             }
         }
     }
-    editing?.let { item -> TaskEditor(item, busy, model::closeEditor, { model.delete(item) }) { title, note, recurrence -> model.edit(item, title, note, recurrence) } }
-    if (error || backgroundFailed) AlertDialog(onDismissRequest = model::dismissError,
-        title = { DialogSystemBarAppearance(); Text(stringResource(R.string.storage_error_title)) },
-        text = { Text(stringResource(R.string.storage_error_body)) },
+    editing?.let { item -> TaskEditor(item, busy, model.editorStateKey, model.textStateStorage, model::reportDraftFailure,
+        model::closeEditor, { model.delete(item) }) { title, note, recurrence -> model.edit(item, title, note, recurrence) } }
+    if (error || backgroundFailed || draftFailed) AlertDialog(onDismissRequest = model::dismissError,
+        title = { DialogSystemBarAppearance(); Text(stringResource(if (draftFailed) R.string.draft_state_failed else R.string.storage_error_title)) },
+        text = { Text(stringResource(if (draftFailed) R.string.draft_state_failed_body else R.string.storage_error_body)) },
         confirmButton = { TextButton(model::dismissError) { Text(stringResource(R.string.ok)) } })
 }
 

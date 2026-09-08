@@ -57,6 +57,8 @@ fun SettingsScreen(model: TaskViewModel, onBack: () -> Unit) {
             HorizontalDivider()
             ReminderSettingsSection(model)
             HorizontalDivider()
+            BackupSettingsSection(model)
+            HorizontalDivider()
             Text(stringResource(R.string.local_only), style = MaterialTheme.typography.titleMedium)
             Text(stringResource(R.string.local_only_body), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall,

@@ -24,6 +24,8 @@
     <string name="empty_active">Un peu de tranquillité.</string>
     <string name="empty_active_hint">Ajoutez une tâche quand vous en avez besoin.</string>
     <string name="storage_error_title">Enregistrement ou lecture impossible</string>
+    <string name="draft_state_failed">Vérifiez votre brouillon</string>
+    <string name="draft_state_failed_body">Une partie du brouillon n’a pas pu être sauvegardée pour récupération ou restaurée. La tâche enregistrée est inchangée. Vérifiez les champs avant d’enregistrer et l’espace disponible sur l’appareil.</string>
     <string name="storage_error_body">Votre brouillon est conservé. Vérifiez le stockage disponible et réessayez.</string>
     <string name="ok">OK</string>
     <string name="active">À faire</string>
@@ -53,6 +55,17 @@
     <string name="light">Clair</string>
     <string name="dark">Sombre</string>
     <string name="local_only">Uniquement sur cet appareil</string>
+    <string name="manual_backup">Sauvegarde manuelle</string>
+    <string name="export_backup">Exporter toutes les tâches</string>
+    <string name="export_result">Tous les états des tâches ont été écrits dans le document choisi. Gardez votre sauvegarde en lieu sûr : elle contient vos titres et notes.</string>
+    <string name="manual_backup_hint">Les fichiers JSON Taskomatic sont compatibles avec iOS. Vous choisissez chaque fichier et emplacement ; un fournisseur de documents peut proposer un stockage distant. Taskomatic ne synchronise rien et ne sauvegarde pas automatiquement.</string>
+    <string name="import_backup">Importer une sauvegarde</string>
+    <string name="import_preview">Tâches à importer : %1$d. Tâches déjà présentes : %2$d. Les tâches existantes restent inchangées. Les actions de notification importées sont réinitialisées.</string>
+    <string name="import_confirm">Importer</string>
+    <string name="import_result">Tâches importées : %1$d. Tâches existantes conservées sans modification : %2$d.</string>
+    <string name="backup_done">Opération de sauvegarde terminée</string>
+    <string name="backup_failed">Échec de la sauvegarde</string>
+    <string name="backup_failed_body">Impossible de lire, valider ou écrire le document. Utilisez un fichier JSON Taskomatic version 1 (10 Mio et 10 000 tâches maximum) et vérifiez l’accès au stockage. Aucune tâche n’a été modifiée par l’opération échouée. Un fichier d’export échoué peut être incomplet.</string>
     <string name="local_only_body">Sans compte, sans synchronisation, sans sauvegarde cloud automatique. Désinstaller l’application efface ses données locales.</string>
     <string name="version">Version %1$s</string>
     <string name="language">Langue</string>

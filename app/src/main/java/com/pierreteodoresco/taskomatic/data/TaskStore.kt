@@ -8,6 +8,7 @@ import com.pierreteodoresco.taskomatic.notifications.SystemReminderScheduler
 import com.pierreteodoresco.taskomatic.notifications.ReminderNotifications
 import com.pierreteodoresco.taskomatic.core.ReminderPlanner
 import com.pierreteodoresco.taskomatic.core.ReminderSettings
+import com.pierreteodoresco.taskomatic.core.TaskBackup
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalTime
@@ -73,6 +74,10 @@ class TaskStore(
     }
 
     suspend fun add(title: String) = mutate { repository.add(title) }
+    suspend fun importBackup(backup: TaskBackup) = mutate { repository.importBackup(backup) }
+    suspend fun backup() = withContext(Dispatchers.IO) {
+        mutex.withLock { TaskBackup(repository.tasks(), clock.instant()) }
+    }
     suspend fun complete(item: TaskItem) = mutate { repository.complete(item.id, item.cycleId) }
     suspend fun completeFromNotification(id: UUID, cycle: UUID) = mutate {
         val completion = repository.complete(id, cycle)
