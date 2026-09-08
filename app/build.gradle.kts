@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
     kotlin("plugin.compose")
 }
 android {
@@ -15,11 +14,14 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true; buildConfig = true }
+    // Both languages must remain available offline after an in-app language change.
+    bundle { language { enableSplit = false } }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildTypes {
+        debug { applicationIdSuffix = ".debug"; versionNameSuffix = "-dev" }
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -27,7 +29,10 @@ android {
     }
     lint { abortOnError = true }
 }
-kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
+kotlin {
+    jvmToolchain(26)
+    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
+}
 dependencies {
     implementation(project(":core"))
     implementation(platform("androidx.compose:compose-bom:2025.12.00"))
@@ -46,4 +51,5 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test:runner:1.7.0")
     androidTestImplementation("androidx.test:rules:1.7.0")
+    androidTestImplementation("androidx.lifecycle:lifecycle-viewmodel-testing:2.9.4")
 }
