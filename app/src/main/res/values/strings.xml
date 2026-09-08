@@ -1,3 +1,43 @@
 <resources>
     <string name="app_name">Taskomatic</string>
+    <string name="tagline">One thing at a time.</string>
+    <string name="task_title">A task to do</string>
+    <string name="add_task">Add task</string>
+    <string name="empty_active">A little breathing room.</string>
+    <string name="empty_active_hint">Add a task whenever you need to.</string>
+    <string name="storage_error_title">Unable to save or load</string>
+    <string name="storage_error_body">Your draft is kept. Check the available storage and try again.</string>
+    <string name="ok">OK</string>
+    <string name="active">To do</string>
+    <string name="completed">Completed</string>
+    <string name="complete_task">Complete %1$s</string>
+    <string name="restore_task">Restore %1$s</string>
+    <string name="empty_completed">No completed tasks yet.</string>
+    <string name="saved_refresh_failed">Saved. Tap to refresh the list.</string>
+    <string name="edit_task">Task details</string>
+    <string name="note">Note (optional)</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="waiting">Waiting</string>
+    <string name="task_completed">Task completed</string>
+    <string name="undo">Undo</string>
+    <string name="delete_task">Delete task</string>
+    <string name="delete">Delete</string>
+    <string name="delete_warning">This permanently deletes the task and its note. This cannot be undone.</string>
+    <string name="discard_title">Discard changes?</string>
+    <string name="discard_body">These changes have not been saved.</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep editing</string>
+    <string name="empty_waiting">No tasks waiting to return.</string>
+    <string name="recurring">Recurring task</string>
+    <string name="recurrence_hint">After completion, this task returns at the start of the next cycle. No deadlines, no overdue tasks.</string>
+    <string name="interval">Repeat every</string>
+    <string name="interval_hint">Choose a number from 1 to 99.</string>
+    <string name="days">Days</string>
+    <string name="weeks">Weeks</string>
+    <string name="months">Months</string>
+    <string name="next_cycle">Returns %1$s</string>
+    <plurals name="every_days"><item quantity="one">Every day</item><item quantity="other">Every %d days</item></plurals>
+    <plurals name="every_weeks"><item quantity="one">Every week</item><item quantity="other">Every %d weeks</item></plurals>
+    <plurals name="every_months"><item quantity="one">Every month</item><item quantity="other">Every %d months</item></plurals>
 </resources>
