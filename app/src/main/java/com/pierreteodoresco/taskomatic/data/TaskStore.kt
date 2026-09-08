@@ -73,7 +73,7 @@ class TaskStore(
         }
     }
 
-    suspend fun add(title: String) = mutate { repository.add(title) }
+    suspend fun add(title: String, note: String = "", recurrence: Recurrence? = null) = mutate { repository.add(title, note, recurrence) }
     suspend fun importBackup(backup: TaskBackup) = mutate { repository.importBackup(backup) }
     suspend fun backup() = withContext(Dispatchers.IO) {
         mutex.withLock { TaskBackup(repository.tasks(), clock.instant()) }

@@ -85,4 +85,26 @@
     <plurals name="every_days"><item quantity="one">Every day</item><item quantity="other">Every %d days</item></plurals>
     <plurals name="every_weeks"><item quantity="one">Every week</item><item quantity="other">Every %d weeks</item></plurals>
     <plurals name="every_months"><item quantity="one">Every month</item><item quantity="other">Every %d months</item></plurals>
+    <string name="home_title">Your tasks</string>
+    <string name="home_subtitle">A little more headspace.</string>
+    <string name="empty_first_title">Room for what matters.</string>
+    <string name="empty_first_body">Write down your first task. We’ll keep it here until you’re done.</string>
+    <string name="empty_done_title">All clear.</string>
+    <string name="empty_done_body">Everything is done for now. Enjoy the space.</string>
+    <string name="empty_archive_title">Your progress goes here.</string>
+    <string name="empty_archive_body">Completed one-time tasks stay here. You can restore them whenever you need.</string>
+    <string name="storage">Storage</string>
+    <string name="reminder_days">Selected days</string>
+    <string name="done">Done</string>
+    <string name="backup_created">Created %1$s</string>
+    <string name="new_task">New task</string>
+    <string name="repeat_title">Repeat</string>
+    <string name="repeat_never">Just once</string>
+    <string name="repeat_daily">Every day</string>
+    <string name="repeat_weekly">Every week</string>
+    <string name="repeat_fortnightly">Every two weeks</string>
+    <string name="repeat_monthly">Every month</string>
+    <string name="repeat_custom">Custom frequency</string>
+    <string name="last_completed">Last completed %1$s</string>
+    <string name="add_short">Add</string>
 </resources>

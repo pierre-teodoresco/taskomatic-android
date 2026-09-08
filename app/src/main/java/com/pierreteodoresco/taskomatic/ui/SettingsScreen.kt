@@ -1,6 +1,8 @@
 package com.pierreteodoresco.taskomatic.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -23,46 +25,59 @@ fun SettingsScreen(model: TaskViewModel, onBack: () -> Unit) {
     val preferences by model.preferences.collectAsStateWithLifecycle()
     val busy by model.busy.collectAsStateWithLifecycle()
     Scaffold(topBar = {
-        TopAppBar(title = { Text(stringResource(R.string.settings)) }, navigationIcon = {
+        ScreenHeader(title = stringResource(R.string.settings), navigation = {
             IconButton(onBack, Modifier.testTag("settings-close")) { Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.back)) }
         })
     }) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleLarge)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Appearance.entries.forEach { appearance ->
-                    FilterChip(preferences.appearance == appearance, { model.setAppearance(appearance) },
-                        label = { Text(stringResource(when (appearance) {
+        Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(28.dp)) {
+            ReminderSettingsSection(model)
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                SectionCaption(stringResource(R.string.appearance))
+                TaskSurface {
+                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                        Segments(Appearance.entries.map { option -> Segment(stringResource(when (option) {
                             Appearance.SYSTEM -> R.string.system
                             Appearance.LIGHT -> R.string.light
                             Appearance.DARK -> R.string.dark
-                        })) }, enabled = !busy, modifier = Modifier.testTag("appearance-${appearance.name.lowercase()}"))
-                }
-            }
-            HorizontalDivider()
-            Text(stringResource(R.string.language), style = MaterialTheme.typography.titleLarge)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                AppLanguage.entries.forEach { language ->
-                    FilterChip(preferences.language == language, { model.setLanguage(language) },
-                        label = { Text(stringResource(when (language) {
+                        }), "appearance-${option.name.lowercase()}") }, preferences.appearance.ordinal, !busy) {
+                            model.setAppearance(Appearance.entries[it])
+                        }
+                        SubtleDivider()
+                        Text(stringResource(R.string.language), style = MaterialTheme.typography.bodyMedium)
+                        Segments(AppLanguage.entries.map { option -> Segment(stringResource(when (option) {
                             AppLanguage.SYSTEM -> R.string.system
                             AppLanguage.ENGLISH -> R.string.english
                             AppLanguage.FRENCH -> R.string.french
-                        })) }, enabled = !busy, modifier = Modifier.testTag("language-${language.name.lowercase()}"))
+                        }), "language-${option.name.lowercase()}") }, preferences.language.ordinal, !busy) {
+                            model.setLanguage(AppLanguage.entries[it])
+                        }
+                        Text(stringResource(R.string.language_hint), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
-            Text(stringResource(R.string.language_hint), style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-            HorizontalDivider()
-            ReminderSettingsSection(model)
-            HorizontalDivider()
             BackupSettingsSection(model)
-            HorizontalDivider()
-            Text(stringResource(R.string.local_only), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.local_only_body), color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                SectionCaption(stringResource(R.string.storage))
+                TaskSurface {
+                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Icon(Icons.Rounded.Smartphone, null, Modifier.size(22.dp))
+                            Text(stringResource(R.string.local_only), style = MaterialTheme.typography.labelLarge)
+                        }
+                        Text(stringResource(R.string.local_only_body), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+            Column(Modifier.fillMaxWidth().padding(vertical = 12.dp), horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                BrandMark(32)
+                Text(stringResource(R.string.app_name), style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
     }
 }

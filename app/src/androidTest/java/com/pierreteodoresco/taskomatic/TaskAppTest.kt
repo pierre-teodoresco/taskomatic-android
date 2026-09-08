@@ -15,6 +15,31 @@ import java.util.UUID
 class TaskAppTest {
     @get:Rule val compose = createEmptyComposeRule()
 
+    @Test fun createRecurringTaskWithDetailsBeforeSaving() {
+        ActivityScenario.launch(MainActivity::class.java).use { activity ->
+            val title = "Détails ${UUID.randomUUID().toString().take(6)}"
+            compose.onNodeWithTag("quick-title").performTextInput(title)
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            compose.onNodeWithTag("quick-title").assertContentDescriptionEquals(context.getString(R.string.task_title))
+            compose.onNodeWithTag("new-task").performClick()
+            compose.onNodeWithTag("edit-title").assertTextContains(title)
+            compose.onNodeWithTag("edit-note").performTextInput("Un chapitre chaque semaine")
+            compose.onNodeWithTag("edit-title").assertContentDescriptionEquals(context.getString(R.string.task_title))
+            compose.onNodeWithTag("edit-note").assertContentDescriptionEquals(context.getString(R.string.note))
+            compose.onNodeWithTag("recurrence-open").performScrollTo().performClick()
+            compose.onNodeWithTag("repeat-weekly").performClick()
+            activity.recreate()
+            compose.onNodeWithTag("edit-note").assertTextContains("Un chapitre chaque semaine")
+            compose.onNodeWithTag("edit-save").performClick()
+            compose.waitUntil(5_000) { compose.onAllNodesWithTag("edit-save").fetchSemanticsNodes().isEmpty() }
+            activity.recreate()
+            compose.onNode(hasTestTag("task-row") and hasText(title)).performClick()
+            compose.onNodeWithTag("edit-note").assertTextContains("Un chapitre chaque semaine")
+            compose.onNodeWithTag("recurrence-open").performScrollTo().performClick()
+            compose.onNodeWithTag("repeat-weekly").assertIsSelected()
+        }
+    }
+
     @Test fun rotatingDuringASlowAddClearsTheCurrentDraftExactlyOnce() {
         ActivityScenario.launch(MainActivity::class.java).use { activity ->
             val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -125,18 +150,25 @@ class TaskAppTest {
             compose.onNodeWithTag("quick-add").performClick()
             compose.waitUntil(5_000) { compose.onAllNodes(hasTestTag("task-row") and hasText(title)).fetchSemanticsNodes().isNotEmpty() }
             compose.onNode(hasTestTag("task-row") and hasText(title)).performClick()
+            compose.onNodeWithTag("recurrence-open").performScrollTo().performClick()
             compose.onNodeWithTag("recurrence-enabled").performScrollTo().performClick()
-            compose.onNodeWithTag("recurrence-interval").performScrollTo().performTextReplacement("2")
+            compose.onNodeWithTag("recurrence-interval").performScrollTo().performTextReplacement("3")
             compose.onNodeWithTag("recurrence-week").performScrollTo().performClick()
+            compose.onNodeWithTag("recurrence-done").performScrollTo().performClick()
             compose.onNodeWithTag("edit-save").performClick()
             compose.waitUntil(5_000) { compose.onAllNodesWithTag("edit-save").fetchSemanticsNodes().isEmpty() }
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             compose.onNodeWithContentDescription(context.getString(R.string.complete_task, title)).performClick()
-            compose.onNodeWithTag("filter-waiting").performClick()
+            compose.waitUntil(5_000) { compose.onAllNodesWithContentDescription(context.getString(R.string.complete_task, title)).fetchSemanticsNodes().isEmpty() }
+            compose.onNodeWithTag("home-list").performScrollToNode(hasTestTag("waiting-section"))
+            compose.onNodeWithTag("waiting-section").assertIsDisplayed()
+            compose.onNodeWithTag("home-list").performScrollToNode(hasTestTag("task-row") and hasText(title))
             compose.onNode(hasTestTag("task-row") and hasText(title)).assertIsDisplayed()
             activity.recreate()
-            compose.onNode(hasTestTag("task-row") and hasText(title)).performClick()
-            compose.onNodeWithTag("recurrence-interval").performScrollTo().assertTextContains("2")
+            compose.onNodeWithTag("home-list").performScrollToNode(hasTestTag("task-row") and hasText(title))
+            compose.onNode(hasTestTag("task-row") and hasText(title)).performScrollTo().performClick()
+            compose.onNodeWithTag("recurrence-open").performScrollTo().performClick()
+            compose.onNodeWithTag("recurrence-interval").performScrollTo().assertTextContains("3")
             compose.onNodeWithTag("recurrence-week").performScrollTo().assertIsSelected()
         }
     }
