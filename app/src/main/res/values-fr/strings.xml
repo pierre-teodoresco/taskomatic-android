@@ -85,4 +85,26 @@
     <plurals name="every_days" tools:ignore="ImpliedQuantity,MissingQuantity"><item quantity="one">Chaque jour</item><item quantity="other">Tous les %d jours</item></plurals>
     <plurals name="every_weeks" tools:ignore="ImpliedQuantity,MissingQuantity"><item quantity="one">Chaque semaine</item><item quantity="other">Toutes les %d semaines</item></plurals>
     <plurals name="every_months" tools:ignore="ImpliedQuantity,MissingQuantity"><item quantity="one">Chaque mois</item><item quantity="other">Tous les %d mois</item></plurals>
+    <string name="home_title">Mes tâches</string>
+    <string name="home_subtitle">Un peu plus de place dans la tête.</string>
+    <string name="empty_first_title">Place à l’essentiel.</string>
+    <string name="empty_first_body">Note ta première tâche. Elle reste ici jusqu’à ce que tu la termines.</string>
+    <string name="empty_done_title">L’esprit libre.</string>
+    <string name="empty_done_body">Tout est fait pour le moment. Profite de ce moment.</string>
+    <string name="empty_archive_title">Tes avancées, ici.</string>
+    <string name="empty_archive_body">Les tâches simples terminées restent ici. Tu peux les réactiver quand tu veux.</string>
+    <string name="storage">Stockage</string>
+    <string name="reminder_days">Jours de rappel</string>
+    <string name="done">Terminé</string>
+    <string name="backup_created">Créée le %1$s</string>
+    <string name="new_task">Nouvelle tâche</string>
+    <string name="repeat_title">Répétition</string>
+    <string name="repeat_never">Une seule fois</string>
+    <string name="repeat_daily">Tous les jours</string>
+    <string name="repeat_weekly">Toutes les semaines</string>
+    <string name="repeat_fortnightly">Toutes les deux semaines</string>
+    <string name="repeat_monthly">Tous les mois</string>
+    <string name="repeat_custom">Fréquence personnalisée</string>
+    <string name="last_completed">Dernière validation : %1$s</string>
+    <string name="add_short">Ajouter</string>
 </resources>

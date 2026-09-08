@@ -57,6 +57,8 @@ class TaskViewModel(application: Application, private val savedState: SavedState
         savedState.get<ArrayList<String>>("editor-original")?.let(textStateStorage::restoreSnapshot)
     } catch (_: Exception) { mutableDraftFailed.value = true; null })
     val editing = mutableEditing.asStateFlow()
+    private val mutableCreating = MutableStateFlow(savedState.get<Boolean>("editor-creating") ?: false)
+    val creating = mutableCreating.asStateFlow()
     // Keep the published key stable until the editor leaves composition, even after clearing recovery state.
     private var publishedEditorKey = savedState.get<String>("editor-state-key")
     val editorStateKey: String get() = checkNotNull(publishedEditorKey)
@@ -137,11 +139,15 @@ class TaskViewModel(application: Application, private val savedState: SavedState
         savedState["editor-original"] = null
         savedState["editor-state-key"] = null
         mutableEditing.value = null
+        savedState["editor-creating"] = false
+        mutableCreating.value = false
         if (key != null) (getApplication<Application>() as TaskomaticApplication).backgroundScope.launch {
             runCatching { textStateStorage.removeEditor(key) }
         }
     }
-    fun openEditor(item: TaskItem) {
+    fun openNewTask() = openEditor(TaskItem(title = quickTitle.value, createdAt = java.time.Instant.now()), isNew = true)
+
+    fun openEditor(item: TaskItem, isNew: Boolean = false) {
         if (mutableBusy.value) return
         val key = UUID.randomUUID().toString()
         fun publish(snapshot: ArrayList<String>) {
@@ -149,6 +155,8 @@ class TaskViewModel(application: Application, private val savedState: SavedState
             savedState["editor-state-key"] = key
             publishedEditorKey = key
             savedState["editor-original"] = snapshot
+            savedState["editor-creating"] = isNew
+            mutableCreating.value = isNew
             mutableEditing.value = item
         }
         if (item.title.length <= TextStateStorage.INLINE_LIMIT && item.note.length <= TextStateStorage.INLINE_LIMIT) {
@@ -164,7 +172,11 @@ class TaskViewModel(application: Application, private val savedState: SavedState
     }
     fun closeEditor() { if (!mutableBusy.value) clearEditor() }
     fun edit(item: TaskItem, title: String, note: String, recurrence: Recurrence?) = perform {
-        store.edit(item, title, note, recurrence)
+        if (mutableCreating.value) {
+            val created = store.add(title, note, recurrence)
+            clearQuickDraft()
+            mutableAdded.value = created.id
+        } else store.edit(item, title, note, recurrence)
         clearEditor()
     }
     fun delete(item: TaskItem) = perform {
