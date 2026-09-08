@@ -9,6 +9,8 @@ import com.pierreteodoresco.taskomatic.core.TaskItem
 import com.pierreteodoresco.taskomatic.core.Recurrence
 import com.pierreteodoresco.taskomatic.core.RecurrenceUnit
 import com.pierreteodoresco.taskomatic.data.CompletionUndo
+import com.pierreteodoresco.taskomatic.data.Appearance
+import com.pierreteodoresco.taskomatic.data.AppLanguage
 import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -19,6 +21,8 @@ import kotlinx.coroutines.launch
 class TaskViewModel(application: Application, private val savedState: SavedStateHandle) : AndroidViewModel(application) {
     private val store = (application as TaskomaticApplication).store
     val tasks = store.tasks
+    val preferences = store.preferences
+    val preferencesLoaded = store.preferencesLoaded
     val quickTitle = savedState.getStateFlow("quick-title", "")
     val refreshFailed = store.refreshFailed
     private val mutableBusy = MutableStateFlow(false)
@@ -41,6 +45,8 @@ class TaskViewModel(application: Application, private val savedState: SavedState
     } }
 
     fun dismissError() { mutableError.value = false }
+    fun setAppearance(value: Appearance) = perform { store.setAppearance(value) }
+    fun setLanguage(value: AppLanguage) = perform { store.setLanguage(value) }
     fun acknowledgeAdded(id: UUID) { if (mutableAdded.value == id) mutableAdded.value = null }
     fun setQuickTitle(value: String) { if (!mutableBusy.value) savedState["quick-title"] = value }
     private fun setEditing(item: TaskItem?) {

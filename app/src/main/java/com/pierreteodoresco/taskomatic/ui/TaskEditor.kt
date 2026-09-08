@@ -39,6 +39,7 @@ fun TaskEditor(item: TaskItem, busy: Boolean, onClose: () -> Unit, onDelete: () 
         (recurring && (validInterval != item.recurrence?.interval || unit != item.recurrence?.unit))
     val close = { if (!busy) { if (dirty) confirmDiscard = true else onClose() } }
     Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        DialogSystemBarAppearance()
         Scaffold(topBar = {
             TopAppBar(title = { Text(stringResource(R.string.edit_task)) },
                 navigationIcon = { IconButton(close, enabled = !busy) { Icon(Icons.Rounded.Close, stringResource(R.string.cancel)) } },
@@ -85,7 +86,7 @@ fun TaskEditor(item: TaskItem, busy: Boolean, onClose: () -> Unit, onDelete: () 
             }
         }
         if (confirmDelete) AlertDialog(onDismissRequest = { if (!busy) confirmDelete = false },
-            title = { Text(stringResource(R.string.delete_task)) },
+            title = { DialogSystemBarAppearance(); Text(stringResource(R.string.delete_task)) },
             text = { Text(stringResource(R.string.delete_warning)) },
             confirmButton = { TextButton(onDelete, enabled = !busy, modifier = Modifier.testTag("delete-confirm")) {
                 Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
@@ -93,7 +94,7 @@ fun TaskEditor(item: TaskItem, busy: Boolean, onClose: () -> Unit, onDelete: () 
                 Text(stringResource(R.string.cancel))
             } })
         if (confirmDiscard) AlertDialog(onDismissRequest = { confirmDiscard = false },
-            title = { Text(stringResource(R.string.discard_title)) },
+            title = { DialogSystemBarAppearance(); Text(stringResource(R.string.discard_title)) },
             text = { Text(stringResource(R.string.discard_body)) },
             confirmButton = { TextButton(onClose, modifier = Modifier.testTag("discard-confirm")) { Text(stringResource(R.string.discard)) } },
             dismissButton = { TextButton({ confirmDiscard = false }, modifier = Modifier.testTag("discard-cancel")) { Text(stringResource(R.string.keep_editing)) } })

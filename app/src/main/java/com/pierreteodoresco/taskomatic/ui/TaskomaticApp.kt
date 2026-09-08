@@ -13,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CheckCircleOutline
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
+import androidx.compose.material.icons.rounded.Settings
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -59,6 +61,8 @@ fun TaskomaticApp(model: TaskViewModel) {
     }
     val title by model.quickTitle.collectAsStateWithLifecycle()
     var filter by rememberSaveable { mutableStateOf(TaskFilter.ACTIVE) }
+    var settingsOpen by rememberSaveable { mutableStateOf(false) }
+    BackHandler(settingsOpen) { settingsOpen = false }
     val listState = rememberLazyListState()
     val added by model.added.collectAsStateWithLifecycle()
     LaunchedEffect(added) { added?.let { id ->
@@ -77,14 +81,17 @@ fun TaskomaticApp(model: TaskViewModel) {
     } }
     val add = model::add
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbar) }, topBar = {
+    if (settingsOpen) SettingsScreen(model) { settingsOpen = false }
+    else Scaffold(snackbarHost = { SnackbarHost(snackbar) }, topBar = {
         TopAppBar(title = {
             Column {
                 Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
                 Text(stringResource(R.string.tagline), style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-        })
+        }, actions = { IconButton({ settingsOpen = true }, Modifier.testTag("settings-open")) {
+            Icon(Icons.Rounded.Settings, stringResource(R.string.settings))
+        } })
     }) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).imePadding().padding(horizontal = 20.dp)) {
             Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -151,7 +158,7 @@ fun TaskomaticApp(model: TaskViewModel) {
     }
     editing?.let { item -> TaskEditor(item, busy, model::closeEditor, { model.delete(item) }) { title, note, recurrence -> model.edit(item, title, note, recurrence) } }
     if (error) AlertDialog(onDismissRequest = model::dismissError,
-        title = { Text(stringResource(R.string.storage_error_title)) },
+        title = { DialogSystemBarAppearance(); Text(stringResource(R.string.storage_error_title)) },
         text = { Text(stringResource(R.string.storage_error_body)) },
         confirmButton = { TextButton(model::dismissError) { Text(stringResource(R.string.ok)) } })
 }

@@ -3,7 +3,12 @@ package com.pierreteodoresco.taskomatic.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.view.WindowCompat
 
 private val LightColors = lightColorScheme(
     primary = Color(0xFF5653CD), onPrimary = Color.White,
@@ -25,4 +30,16 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun TaskomaticTheme(dark: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = if (dark) DarkColors else LightColors, content = content)
+}
+
+@Composable
+fun DialogSystemBarAppearance() {
+    val window = (LocalView.current.parent as? DialogWindowProvider)?.window
+    val dark = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    SideEffect {
+        window?.let { WindowCompat.getInsetsController(it, it.decorView).apply {
+            isAppearanceLightStatusBars = !dark
+            isAppearanceLightNavigationBars = !dark
+        } }
+    }
 }
