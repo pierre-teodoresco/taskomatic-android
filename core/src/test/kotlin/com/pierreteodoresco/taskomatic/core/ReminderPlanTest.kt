@@ -8,6 +8,18 @@ class ReminderPlanTest {
     private val zone = ZoneId.of("Europe/Paris")
     private val now = Instant.parse("2026-09-08T08:00:00Z")
 
+    @Test fun aDelayedAlarmOnlyDeliversItsStillValidLocalDayAndTime() {
+        val task = TaskItem(title = "Coffee", createdAt = Instant.parse("2026-09-07T10:00:00Z"))
+        val settings = ReminderSettings(true, LocalTime.of(9, 0), setOf(DayOfWeek.TUESDAY))
+        val expected = Instant.parse("2026-09-08T07:00:00Z")
+        assertEquals(listOf(task), ReminderPlanner.due(listOf(task), settings, expected, now, zone))
+        assertTrue(ReminderPlanner.due(listOf(task), settings, expected, Instant.parse("2026-09-08T06:59:00Z"), zone).isEmpty())
+        assertTrue(ReminderPlanner.due(listOf(task), settings, expected, Instant.parse("2026-09-08T22:30:00Z"), zone).isEmpty())
+        assertTrue(ReminderPlanner.due(listOf(task), settings.copy(time = LocalTime.of(10, 0)), expected, now, zone).isEmpty())
+        assertTrue(ReminderPlanner.due(listOf(task.complete(now)), settings, expected, now, zone).isEmpty())
+        assertTrue(ReminderPlanner.due(listOf(task), settings.copy(enabled = false), expected, now, zone).isEmpty())
+    }
+
     @Test fun aSkippedCalendarDayDoesNotSendOnAnUnselectedWeekday() {
         val plan = ReminderPlanner.next(listOf(TaskItem(title = "Friday", createdAt = now)),
             ReminderSettings(true, LocalTime.of(9, 0), setOf(DayOfWeek.FRIDAY)),

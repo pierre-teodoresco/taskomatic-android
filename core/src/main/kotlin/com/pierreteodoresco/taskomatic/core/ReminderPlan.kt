@@ -11,6 +11,13 @@ data class ReminderSettings(
 data class ReminderPlan(val at: Instant, val tasks: List<TaskItem>)
 
 object ReminderPlanner {
+    fun due(tasks: List<TaskItem>, settings: ReminderSettings, expectedAt: Instant, now: Instant, zone: ZoneId): List<TaskItem> {
+        val today = now.atZone(zone).toLocalDate()
+        if (expectedAt > now || expectedAt.atZone(zone).toLocalDate() != today) return emptyList()
+        val plan = next(tasks, settings, today.atStartOfDay(zone).toInstant().minusNanos(1), zone)
+        return if (plan?.at == expectedAt) tasks.filter { it.isActive(now, zone) } else emptyList()
+    }
+
     fun next(tasks: List<TaskItem>, settings: ReminderSettings, after: Instant, zone: ZoneId): ReminderPlan? {
         if (!settings.enabled) return null
         val earliest = tasks.mapNotNull {

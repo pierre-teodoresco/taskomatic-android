@@ -12,6 +12,8 @@ import com.pierreteodoresco.taskomatic.data.CompletionUndo
 import com.pierreteodoresco.taskomatic.data.Appearance
 import com.pierreteodoresco.taskomatic.data.AppLanguage
 import java.time.Instant
+import java.time.LocalTime
+import java.time.DayOfWeek
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +25,11 @@ class TaskViewModel(application: Application, private val savedState: SavedState
     val tasks = store.tasks
     val preferences = store.preferences
     val preferencesLoaded = store.preferencesLoaded
+    val schedulingFailed = store.schedulingFailed
+    val nextReminder = store.nextReminder
     val quickTitle = savedState.getStateFlow("quick-title", "")
     val refreshFailed = store.refreshFailed
+    val backgroundFailed = store.backgroundFailed
     private val mutableBusy = MutableStateFlow(false)
     val busy = mutableBusy.asStateFlow()
     private val mutableError = MutableStateFlow(false)
@@ -44,9 +49,12 @@ class TaskViewModel(application: Application, private val savedState: SavedState
         catch (_: Exception) { mutableError.value = true }
     } }
 
-    fun dismissError() { mutableError.value = false }
+    fun dismissError() { mutableError.value = false; store.dismissBackgroundFailure() }
     fun setAppearance(value: Appearance) = perform { store.setAppearance(value) }
     fun setLanguage(value: AppLanguage) = perform { store.setLanguage(value) }
+    fun setRemindersEnabled(value: Boolean) = perform { store.setRemindersEnabled(value) }
+    fun setReminderTime(value: LocalTime) = perform { store.setReminderTime(value) }
+    fun toggleReminderDay(value: DayOfWeek) = perform { store.toggleReminderDay(value) }
     fun acknowledgeAdded(id: UUID) { if (mutableAdded.value == id) mutableAdded.value = null }
     fun setQuickTitle(value: String) { if (!mutableBusy.value) savedState["quick-title"] = value }
     private fun setEditing(item: TaskItem?) {

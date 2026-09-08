@@ -1,5 +1,23 @@
 <resources>
     <string name="app_name">Taskomatic</string>
+    <string name="notification_channel">Task reminders</string>
+    <string name="notification_title">A task is waiting for you</string>
+    <string name="notification_complete">Complete</string>
+    <string name="notification_summary">%1$d tasks are waiting for you</string>
+    <string name="notification_failure">Unable to complete task</string>
+    <string name="notification_failure_body">The task is unchanged. Open Taskomatic to try again.</string>
+    <string name="reminders">Reminders</string>
+    <string name="test_notification">Send a test notification</string>
+    <string name="test_notification_body">Your local reminders are ready.</string>
+    <string name="test_notification_failed">Notification not sent</string>
+    <string name="reminders_enabled">Remind me about active tasks</string>
+    <string name="reminder_time">Around %1$s</string>
+    <string name="reminder_timing_hint">Only on selected days, when tasks are active. Android may delay delivery to save battery. Reopen Taskomatic after force-stopping it to resume reminders.</string>
+    <string name="notifications_blocked">Notifications are blocked in Android settings.</string>
+    <string name="notification_settings">Open notification settings</string>
+    <string name="reminder_scheduling_failed">Tasks saved, but reminders could not be scheduled. Tap to retry.</string>
+    <string name="next_reminder">Next reminder: around %1$s</string>
+    <string name="no_reminder">No reminder scheduled. Select at least one day and keep an active or recurring task.</string>
     <string name="tagline">One thing at a time.</string>
     <string name="task_title">A task to do</string>
     <string name="add_task">Add task</string>
