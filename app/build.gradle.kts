@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
     kotlin("plugin.compose")
 }
 android {
@@ -30,7 +29,10 @@ android {
     }
     lint { abortOnError = true }
 }
-kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
+kotlin {
+    jvmToolchain(26)
+    compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
+}
 dependencies {
     implementation(project(":core"))
     implementation(platform("androidx.compose:compose-bom:2025.12.00"))

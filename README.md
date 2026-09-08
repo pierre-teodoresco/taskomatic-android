@@ -19,7 +19,7 @@ Les rappels sont approximatifs et peuvent être retardés par Android, notamment
 
 ## Développement
 
-JDK 17, SDK Android 36, Android 8 minimum. Ouvrir ce dossier dans Android Studio, ou consulter [le guide de développement](docs/development.md) pour la compilation et les tests en ligne de commande.
+Gradle 9.7.1, JDK 26, plugin Android 9.4.0 et Kotlin 2.4.20 ; SDK Android 36, Android 8 minimum. La JVM de build est sélectionnée automatiquement par les critères Gradle versionnés. Ouvrir ce dossier dans Android Studio Quail 4 (2026.1.4) ou ultérieur, ou consulter [le guide de développement](docs/development.md) pour la compilation et les tests en ligne de commande.
 
 Le module `core` contient les règles métier indépendantes d’Android ; `app` contient l’interface et les intégrations système. Voir [l’architecture](docs/architecture.md) et [le workflow GitHub](docs/git-workflow.md).
 
